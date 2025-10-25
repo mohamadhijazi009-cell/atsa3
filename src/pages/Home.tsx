@@ -98,38 +98,18 @@ export function Home() {
         </div>
       )}
 
-      <section ref={heroAnimation.ref} className="relative py-32 mt-20 overflow-hidden">
-        <div className="absolute inset-0">
-          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1200 600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style={{stopColor: '#64748b', stopOpacity: 1}} />
-                <stop offset="50%" style={{stopColor: '#475569', stopOpacity: 1}} />
-                <stop offset="100%" style={{stopColor: '#334155', stopOpacity: 1}} />
-              </linearGradient>
-              <linearGradient id="lightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style={{stopColor: '#94a3b8', stopOpacity: 1}} />
-                <stop offset="100%" style={{stopColor: '#64748b', stopOpacity: 1}} />
-              </linearGradient>
-            </defs>
-            <path d="M0,0 L1200,0 L1200,350 Q900,300 600,350 T0,350 Z" fill="url(#blueGradient)" opacity="0.9" />
-            <path d="M0,200 L1200,200 L1200,400 Q900,360 600,400 T0,400 Z" fill="url(#lightGradient)" opacity="0.7" />
-            <path d="M0,380 L1200,380 L1200,430 Q900,410 600,430 T0,430 Z" fill="#ffffff" opacity="0.95" />
-            <path d="M0,420 L1200,420 L1200,600 L0,600 Z" fill="#0a0a0a" />
-          </svg>
-        </div>
-        <div className="container mx-auto px-6 relative z-10">
-          <div className={`max-w-3xl transition-all duration-700 ${heroAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <h1 className="text-5xl font-bold text-white mb-6 animate-fadeIn drop-shadow-lg">
-              Precision Manufacturing in Stainless Steel
-            </h1>
-            <p className="text-xl text-slate-100 mb-4 animate-fadeIn delay-100 drop-shadow-md">
-              Since 1992, ATSA has been leading the industry with over 30 years of expertise in stainless steel fabrication and precision metalwork.
-            </p>
-            <p className="text-lg text-slate-200 mb-8 animate-fadeIn delay-200 drop-shadow-md">
-              Specializing in aluminum, inox, stainless steel, welding, cutting, bending, and mechanical works.
-            </p>
-          </div>
+      <section ref={heroAnimation.ref} className="container mx-auto px-6 py-32 mt-20 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-400/30 via-blue-gray-400/20 to-transparent rounded-3xl"></div>
+        <div className={`max-w-3xl relative z-10 transition-all duration-700 ${heroAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <h1 className="text-5xl font-bold text-[#3d4f5c] mb-6 animate-fadeIn">
+            Precision Manufacturing in Stainless Steel
+          </h1>
+          <p className="text-xl text-gray-600 mb-4 animate-fadeIn delay-100">
+            Since 1992, ATSA has been leading the industry with over 30 years of expertise in stainless steel fabrication and precision metalwork.
+          </p>
+          <p className="text-lg text-gray-500 mb-8 animate-fadeIn delay-200">
+            Specializing in aluminum, inox, stainless steel, welding, cutting, bending, and mechanical works.
+          </p>
         </div>
       </section>
 
