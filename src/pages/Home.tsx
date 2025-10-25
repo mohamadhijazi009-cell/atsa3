@@ -139,17 +139,35 @@ export function Home() {
                   key={product.id}
                   onMouseEnter={() => handleMouseEnter(product.id)}
                   onMouseLeave={handleMouseLeave}
-                  className={`relative group transition-all duration-700 block ${productsAnimation.isVisible ? 'opacity-100' : 'opacity-0 scale-95'} ${
-                    isExpanded ? 'scale-110 z-20 md:col-span-2 lg:col-span-2' : isOtherExpanded ? 'scale-90 opacity-50' : 'scale-100'
+                  className={`relative group transition-all duration-500 ease-out ${productsAnimation.isVisible ? 'opacity-100' : 'opacity-0 scale-95'} ${
+                    isExpanded ? 'z-30' : isOtherExpanded ? 'opacity-60' : 'z-10'
                   }`}
                   style={{ transitionDelay: `${index * 100}ms` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-slate-700/80 to-slate-900/80 backdrop-blur-xl rounded-lg transform transition-transform"></div>
-                  <div className="relative bg-white/90 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition">
-                    {product.imageUrl && <img src={product.imageUrl} alt={product.name} className={`w-full object-cover transition-all duration-700 ${isExpanded ? 'h-80' : 'h-64'}`} />}
-                    <div className={`p-6 transition-all duration-700 ${isExpanded ? 'max-h-none' : 'max-h-32'}`}>
-                      <h3 className="text-xl font-bold text-[#3d4f5c] mb-2">{product.name}</h3>
-                      <p className={`text-gray-600 transition-all duration-700 ${isExpanded ? '' : 'line-clamp-3'}`}>{product.description}</p>
+                  <div className={`absolute -inset-2 bg-gradient-to-br from-[#3d4f5c]/20 to-[#5a7280]/20 rounded-xl transition-all duration-500 ${
+                    isExpanded ? 'opacity-100 blur-xl' : 'opacity-0 blur-none'
+                  }`}></div>
+                  <div className={`relative bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-500 ${
+                    isExpanded ? 'shadow-2xl scale-105 ring-2 ring-[#3d4f5c]/30' : 'shadow-lg hover:shadow-xl hover:scale-[1.02]'
+                  }`}>
+                    {product.imageUrl && (
+                      <div className="overflow-hidden">
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className={`w-full object-cover transition-all duration-500 ${
+                            isExpanded ? 'h-80 scale-105' : 'h-64 group-hover:scale-110'
+                          }`}
+                        />
+                      </div>
+                    )}
+                    <div className={`p-6 transition-all duration-500 ${isExpanded ? 'bg-gradient-to-b from-white to-slate-50' : ''}`}>
+                      <h3 className={`font-bold text-[#3d4f5c] mb-2 transition-all duration-500 ${
+                        isExpanded ? 'text-2xl' : 'text-xl'
+                      }`}>{product.name}</h3>
+                      <p className={`text-gray-600 transition-all duration-500 leading-relaxed ${
+                        isExpanded ? 'text-base' : 'text-sm line-clamp-3'
+                      }`}>{product.description}</p>
                     </div>
                   </div>
                 </div>
