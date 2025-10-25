@@ -1,20 +1,31 @@
 import { Zap, Shield, CheckCircle, Instagram, MapPin, Lock } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import { useAuth } from '../contexts/AuthContext';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { useSiteSettings } from '../hooks/useSiteSettings';
+import { useServices } from '../hooks/useServices';
+import { useMaterials } from '../hooks/useMaterials';
+import { useHeroContent } from '../hooks/useHeroContent';
+import { initializeContent } from '../services/initializeContent';
 
 export function Home() {
   const { products, loading } = useProducts();
   const { settings } = useSiteSettings();
+  const { services, loading: servicesLoading } = useServices();
+  const { materials, loading: materialsLoading } = useMaterials();
+  const { heroContent, loading: heroLoading } = useHeroContent();
   const { isAdmin, user, userName, logout } = useAuth();
   const navigate = useNavigate();
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [hoveredProductId, setHoveredProductId] = useState<string | null>(null);
   const [hoverTimeout, setHoverTimeout] = useState<NodeJS.Timeout | null>(null);
   const displayedProducts = showAllProducts ? products : products.slice(0, 3);
+
+  useEffect(() => {
+    initializeContent();
+  }, []);
 
   const handleLogout = async () => {
     await logout();
@@ -43,6 +54,12 @@ export function Home() {
   const servicesAnimation = useScrollAnimation();
   const materialsAnimation = useScrollAnimation();
   const contactAnimation = useScrollAnimation();
+
+  const iconMap: Record<string, any> = {
+    Zap,
+    Shield,
+    CheckCircle
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -102,13 +119,13 @@ export function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-slate-400/30 via-blue-gray-400/20 to-transparent rounded-3xl"></div>
         <div className={`max-w-3xl relative z-10 transition-all duration-700 ${heroAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h1 className="text-5xl font-bold text-[#3d4f5c] mb-6 animate-fadeIn">
-            Precision Manufacturing in Stainless Steel
+            {heroContent.title}
           </h1>
           <p className="text-xl text-gray-600 mb-4 animate-fadeIn delay-100">
-            Since 1992, ATSA has been leading the industry with over 30 years of expertise in stainless steel fabrication and precision metalwork.
+            {heroContent.subtitle}
           </p>
           <p className="text-lg text-gray-500 mb-8 animate-fadeIn delay-200">
-            Specializing in aluminum, inox, stainless steel, welding, cutting, bending, and mechanical works.
+            {heroContent.description}
           </p>
         </div>
       </section>
@@ -191,71 +208,63 @@ export function Home() {
       <section ref={servicesAnimation.ref} id="services" className="bg-gray-50 py-20">
         <div className="container mx-auto px-6">
           <h2 className={`text-3xl font-bold text-[#3d4f5c] mb-12 text-center transition-all duration-700 ${servicesAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>Our Services</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className={`relative p-8 rounded-lg shadow-sm overflow-hidden group transition-all duration-700 ${servicesAnimation.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-              <div className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition" style={{backgroundImage: 'url(https://images.pexels.com/photos/1474993/pexels-photo-1474993.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750)'}}></div>
-              <div className="absolute inset-0 bg-gradient-to-b from-white/90 to-white/95"></div>
-              <div className="relative z-10">
-                <Zap className="w-12 h-12 text-[#3d4f5c] mb-4" />
-                <h3 className="text-xl font-bold mb-3 text-[#3d4f5c]">Welding</h3>
-                <p className="text-gray-600">
-                  Expert welding services ensuring strong, durable bonds for all metal types.
-                </p>
-              </div>
+          {servicesLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-12 h-12 border-4 border-[#3d4f5c] border-t-transparent rounded-full animate-spin"></div>
             </div>
-            <div className={`relative p-8 rounded-lg shadow-sm overflow-hidden group transition-all duration-700 delay-100 ${servicesAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <div className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition" style={{backgroundImage: 'url(https://images.pexels.com/photos/1216589/pexels-photo-1216589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750)'}}></div>
-              <div className="absolute inset-0 bg-gradient-to-b from-white/90 to-white/95"></div>
-              <div className="relative z-10">
-                <Shield className="w-12 h-12 text-[#3d4f5c] mb-4" />
-                <h3 className="text-xl font-bold mb-3 text-[#3d4f5c]">Cutting & Bending</h3>
-                <p className="text-gray-600">
-                  Precision cutting and bending services for complex metal forming requirements.
-                </p>
-              </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-8">
+              {services.map((service, index) => {
+                const Icon = iconMap[service.icon] || CheckCircle;
+                const delays = ['', 'delay-100', 'delay-200'];
+                const animations = ['opacity-0 -translate-x-10', 'opacity-0 translate-y-10', 'opacity-0 translate-x-10'];
+
+                return (
+                  <div key={service.id} className={`bg-white rounded-lg shadow-md overflow-hidden group transition-all duration-700 ${delays[index % 3]} ${servicesAnimation.isVisible ? 'opacity-100 translate-x-0 translate-y-0' : animations[index % 3]}`}>
+                    <div className="relative h-56 overflow-hidden">
+                      <img
+                        src={service.imageUrl}
+                        alt={service.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Icon className="w-8 h-8 text-[#3d4f5c]" />
+                        <h3 className="text-xl font-bold text-[#3d4f5c]">{service.title}</h3>
+                      </div>
+                      <p className="text-gray-600 leading-relaxed">
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <div className={`relative p-8 rounded-lg shadow-sm overflow-hidden group transition-all duration-700 delay-200 ${servicesAnimation.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-              <div className="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition" style={{backgroundImage: 'url(https://images.pexels.com/photos/257736/pexels-photo-257736.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750)'}}></div>
-              <div className="absolute inset-0 bg-gradient-to-b from-white/90 to-white/95"></div>
-              <div className="relative z-10">
-                <CheckCircle className="w-12 h-12 text-[#3d4f5c] mb-4" />
-                <h3 className="text-xl font-bold mb-3 text-[#3d4f5c]">Mechanical Works</h3>
-                <p className="text-gray-600">
-                  Comprehensive mechanical fabrication and assembly services.
-                </p>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
       <section ref={materialsAnimation.ref} id="materials" className="py-20">
         <div className="container mx-auto px-6">
           <h2 className={`text-3xl font-bold text-[#3d4f5c] mb-12 text-center transition-all duration-700 ${materialsAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>Materials We Work With</h2>
-          <div className={`max-w-2xl mx-auto transition-all duration-700 delay-200 ${materialsAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-6 h-6 text-[#3d4f5c] flex-shrink-0" />
-                <span className="text-lg text-gray-700">Stainless Steel (Inox)</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-6 h-6 text-[#3d4f5c] flex-shrink-0" />
-                <span className="text-lg text-gray-700">Aluminum</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-6 h-6 text-[#3d4f5c] flex-shrink-0" />
-                <span className="text-lg text-gray-700">Carbon Steel</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-6 h-6 text-[#3d4f5c] flex-shrink-0" />
-                <span className="text-lg text-gray-700">Galvanized Steel (Galva)</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-6 h-6 text-[#3d4f5c] flex-shrink-0" />
-                <span className="text-lg text-gray-700">Various Metal Alloys</span>
-              </li>
-            </ul>
-          </div>
+          {materialsLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-12 h-12 border-4 border-[#3d4f5c] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : (
+            <div className={`max-w-2xl mx-auto transition-all duration-700 delay-200 ${materialsAnimation.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+              <ul className="space-y-4">
+                {materials.map((material) => (
+                  <li key={material.id} className="flex items-center gap-3">
+                    <CheckCircle className="w-6 h-6 text-[#3d4f5c] flex-shrink-0" />
+                    <span className="text-lg text-gray-700">{material.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </section>
 

@@ -7,6 +7,7 @@ import { collection, addDoc, updateDoc, deleteDoc, doc, setDoc } from 'firebase/
 import { db } from '../config/firebase';
 import { uploadToPostimages } from '../services/postimagesUpload';
 import { Plus, Edit2, Trash2, LogOut, Home, Upload, X, Image, Sparkles } from 'lucide-react';
+import { AdminContentEditor } from '../components/AdminContentEditor';
 
 export function AdminDashboard() {
   const { isAdmin, logout } = useAuth();
@@ -249,9 +250,14 @@ export function AdminDashboard() {
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-12">
           <h3 className="text-xl font-bold text-[#3d4f5c] mb-4">Current Logo</h3>
           <img src={settings.logoUrl} alt="Current Logo" className="w-32 h-32 object-contain border border-gray-200 rounded-lg" />
+        </div>
+
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-[#3d4f5c] mb-8">Page Content</h2>
+          <AdminContentEditor />
         </div>
 
         <div className="flex justify-between items-center mb-8 mt-12">
